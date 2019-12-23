@@ -1,0 +1,29 @@
+exports.store = (req, res) => {
+  request = {
+    title: req.body.title,
+    category: req.body.category,
+    content: req.body.content,
+    img: req.body.img,
+    createdBy: userId
+  };
+  Articles.create(request).then(response => {
+    Articles.findOne({
+      attributes: ["id", "title", "content", "img", "createdAt", "updatedAt"],
+      include: [
+        {
+          model: Categories,
+          as: "categories",
+          attributes: ["id", "name"]
+        },
+        {
+          model: Users,
+          as: "users",
+          attributes: ["id", "name"]
+        }
+      ],
+      where: { id: response.id }
+    }).then(response => {
+      res.send(response);
+    });
+  });
+};
